@@ -75,10 +75,28 @@ const monsters = [
     image: "./img/slime.png"
   },
   {
+    name: "Goblin",
+    level: 5,
+    health: 30,
+    image: "./img/goblin.png"
+  },
+  {
     name: "Fanged Beast",
     level: 8,
     health: 60,
     image: "./img/fangedbeast.png"
+  },
+  {
+    name: "Ogre",
+    level: 15,
+    health: 100,
+    image: "./img/ogre.png"
+  },
+  {
+    name: "Goblin King",
+    level: 20,
+    health: 200,
+    image: "./img/goblinking.png"
   },
   {
     name: "Dragon",
@@ -93,6 +111,8 @@ const monsters = [
     image: "./img/demon.png"
   }
 ]
+const monsterEncounter =[fightSlime, fightGoblin, fightBeast, fightOgre, fightGoblinKing];
+
 const locations = [
     {
         name: "town square",
@@ -111,8 +131,8 @@ const locations = [
     },
     {
         name: "cave",
-        "button text": ["Fight slime", "Fight fanged beast", "Go to town square"],
-        "button functions": [fightSlime, fightBeast, goTown],
+        "button text": ["Take the left path", "Take the right path", "Go to town square"],
+        "button functions": [monsterEncounter[randomMonsterEncounter], monsterEncounter[randomMonsterEncounter], goTown],
         text: "You enter the cave. You see some monsters.",
         image: "./img/cave.png"
     },
@@ -297,22 +317,38 @@ function sellWeapon() {
   }
 }
 
+
 function fightSlime() {
   fighting = 0;
   goFight();
 }
 
-function fightBeast() {
+function fightGoblin() {
   fighting = 1;
   goFight();
 }
 
-function fightDragon() {
+function fightBeast() {
   fighting = 2;
   goFight();
 }
-function fightDemon() {
+
+function fightOgre() {
   fighting = 3;
+  goFight();
+}
+
+function fightGoblinKing() {
+  fighting = 4;
+  goFight();
+}
+
+function fightDragon() {
+  fighting = 5;
+  goFight();
+}
+function fightDemon() {
+  fighting = 6;
   goFight();
 }
 function goFight() {
@@ -470,7 +506,11 @@ function enchantWeapon() {
     text.innerText = "You do not have enough gold to enchant your weapon.";
     }
   }
-
+function randomMonsterEncounter() {
+    const randomIndex = Math.floor(Math.random() * monsterEncounter.length);
+    monsterEncounter[randomIndex]();  
+  }
+  
 
 function easterEgg() {
   update(locations[7]);
