@@ -1,6 +1,6 @@
 let xp = 0;
 let health = 100;
-let gold = 200;
+let gold = 50;
 let currentWeapon = 0;
 let fighting;
 let monsterHealth;
@@ -23,6 +23,10 @@ const monsterStats = document.querySelector("#monsterStats");
 const monsterName = document.querySelector("#monsterName");
 const monsterHealthText =document.querySelector("#monsterHealth");
 const image = document.querySelector("#image");
+const saveButton = document.querySelector("#saveButton");
+const loadButton = document.querySelector("#loadButton");
+
+
 const weapons = [
   { 
     name: 'stick', 
@@ -159,6 +163,10 @@ const locations = [
 button1.onclick = goStore;
 button2.onclick = goCave;
 button3.onclick = fightDragon;
+saveButton.onclick = saveGame;
+loadButton.onclick = loadGame;
+saveButton.style.display = "inline-block";
+loadButton.style.display = "inline-block";
 
 function update(location) {
   monsterStats.style.display = "none";
@@ -171,9 +179,56 @@ function update(location) {
   text.innerText = location.text;
   image.src = location.image;
 }
+function saveGame() {
+  const gameState = {
+      xp: xp,
+      health: health,
+      gold: gold,
+      currentWeapon: currentWeapon,
+      inventory: inventory,
+      playerspells: playerspells,
+      spells: spells,
+      gameCounter: gameCounter,
+      level: level
+  };
+
+  localStorage.setItem('gameState', JSON.stringify(gameState));
+  alert('Game saved!');
+}
+
+function loadGame() {
+  const savedState = localStorage.getItem('gameState');
+
+  if (savedState) {
+      const gameState = JSON.parse(savedState);
+      xp = gameState.xp;
+      health = gameState.health;
+      gold = gameState.gold;
+      currentWeapon = gameState.currentWeapon;
+      inventory = gameState.inventory;
+      playerspells = gameState.playerspells;
+      spells = gameState.spells;
+      gameCounter = gameState.gameCounter;
+      level = gameState.level;
+
+      updateUI(); 
+      alert('Game loaded!');
+  } else {
+      alert('No saved game found.');
+  }
+}
+function updateUI() {
+  xpText.innerText = xp;
+  healthText.innerText = health;
+  goldText.innerText = gold;
+  levelText.innerText = level;
+}
+
 
 function goTown() {
   update(locations[0]);
+  saveButton.style.display = "inline-block";
+  loadButton.style.display = "inline-block";
   if (gameCounter == 1) {
     button4.style.display = "inline-block";
     button4.onclick = fightDemon;
@@ -187,12 +242,16 @@ function goStore() {
   update(locations[1]);
   button4.style.display = "none";
   button5.style.display = "none";
+  saveButton.style.display = "none";
+  loadButton.style.display = "none";
 }
 
 function goCave() {
   update(locations[2]); 
   button4.style.display = "none";
   button5.style.display = "none";
+  saveButton.style.display = "none";
+  loadButton.style.display = "none";
 }
 
 function buyHealth() {
@@ -264,6 +323,8 @@ function goFight() {
   monsterName.innerText = monsters[fighting].name;
   monsterHealthText.innerText = monsterHealth;
   button5.style.display = "none";
+  saveButton.style.display = "none";
+  loadButton.style.display = "none";
   if (spells.length > 0) {
     button4.style.display = "inline-block";
     button4.onclick = goTown;
@@ -337,6 +398,8 @@ function defeatMonster() {
   xpText.innerText = xp;
   button4.style.display = "none";
   button5.style.display = "none";
+  saveButton.style.display = "none";
+  loadButton.style.display = "none";
 }
 
 function lose() {
@@ -360,7 +423,7 @@ function restart() {
   healthText.innerText = health;
   xpText.innerText = xp;
   levelText.innerText = level;
-  gameCounter = 1;
+  gameCounter = 0;
   goTown();
 }
 
@@ -368,6 +431,8 @@ function goSorcerer() {
   update(locations[8]);
   button4.style.display = "none";
   button5.style.display = "none";
+  saveButton.style.display = "none";
+  loadButton.style.display = "none";
   if (spells.length == 0){
     let newSpell = magic[playerspells].name;
     spells.push(newSpell);
@@ -409,6 +474,8 @@ function enchantWeapon() {
 
 function easterEgg() {
   update(locations[7]);
+  saveButton.style.display = "none";
+  loadButton.style.display = "none";
 }
 
 function pickTwo() {
