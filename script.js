@@ -6,6 +6,7 @@ let fighting;
 let monsterHealth;
 let inventory = ["stick"];
 let playerspells = 0;
+let playerMana = 100;
 let spells =[];
 let gameCounter = 0;
 let level = 1;
@@ -52,19 +53,23 @@ const weapons = [
 const magic = [
   {
     name: "fire",
-    power: 100
+    power: 100,
+    mana: 30
   },
   {
     name: "ice",
-    power: 200
-  },
-  {
-    name: "lightning",
-    power: 300
+    power: 200,
+    mana: 50
   },
   {
     name: "earth",
-    power: 400
+    power: 300,
+    mana: 70
+  },
+  {
+    name: "lightning",
+    power: 400,
+    mana: 90
   }
 ];
 const monsters = [
@@ -251,6 +256,7 @@ function goTown() {
   loadButton.style.display = "inline-block";
   if (gameCounter >= 1) {
     button4.style.display = "inline-block";
+    button4.innerText = "Fight Demon";
     button4.onclick = fightDemon;
     text.innerText = "You see a sorcerer has visited the town.";
     button5.style.display = "inline-block";
@@ -368,6 +374,7 @@ function goFight() {
     button4.style.display = "inline-block";
     button4.onclick = goTown;
     button4.innerText = "Run";
+    button3.style.display = "inline-block";
     button3.onclick = magicAttack;
     button3.innerText = "Magic";
   } else {
@@ -411,23 +418,29 @@ function dodge() {
 }
 
 function magicAttack() {
-  text.innerText = "The " + monsters[fighting].name + " attacks.";
-  text.innerText += "You attack the " + monsters[fighting].name + " with your " + spells[playerspells] + ".";
-  health -= getMonsterAttackValue(monsters[fighting].level);
-  if(isMonsterHit()) {
-    monsterHealth -= magic[playerspells].power + Math.floor(Math.random() * xp) + 1 + level*1.5;
+  if (playerMana >= magic[playerspells].mana) {
+    playerMana -= magic[playerspells].mana;
+    manaText.innerText = playerMana;
+    text.innerText = "The " + monsters[fighting].name + " attacks.";
+    text.innerText += "You attack the " + monsters[fighting].name + " with your " + spells[playerspells] + ".";
+    health -= getMonsterAttackValue(monsters[fighting].level);
+    if(isMonsterHit()) {
+      monsterHealth -= magic[playerspells].power + Math.floor(Math.random() * xp) + 1 + level*1.5;
+    } else {
+      text.innerText += " You miss.";
+    }
+    healthText.innerText = health;
+    monsterHealthText.innerText = monsterHealth;
+    if (monsterHealth <= 0) {
+      fighting >=5 ? winGame() : defeatMonster();
+    }
+    if (health <= 0) {
+      lose();
+    } else if (monsterHealth <= 0) {
+      fighting >=5 ? winGame() : defeatMonster();
+    }
   } else {
-    text.innerText += " You miss.";
-  }
-  healthText.innerText = health;
-  monsterHealthText.innerText = monsterHealth;
-  if (monsterHealth <= 0) {
-    fighting >=5 ? winGame() : defeatMonster();
-  }
-  if (health <= 0) {
-    lose();
-  } else if (monsterHealth <= 0) {
-    fighting >=5 ? winGame() : defeatMonster();
+    text.innerText = "You do not have enough mana to cast a spell.";
   }
 }
 
@@ -468,9 +481,11 @@ function restart() {
   health = 100;
   gold = 50;
   level = 1;
+  playerMana = 100;
   currentWeapon = 0;
   inventory = ["stick"];
   goldText.innerText = gold;
+  manaText.innerText = playerMana;
   healthText.innerText = health;
   xpText.innerText = xp;
   levelText.innerText = level;
