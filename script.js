@@ -132,7 +132,7 @@ const locations = [
     {
         name: "cave",
         "button text": ["Take the left path", "Take the right path", "Go to town square"],
-        "button functions": [monsterEncounter[randomMonsterEncounter], monsterEncounter[randomMonsterEncounter], goTown],
+        "button functions": [randomMonsterEncounter, randomMonsterEncounter, goTown],
         text: "You enter the cave. You see some monsters.",
         image: "./img/cave.png"
     },
@@ -249,12 +249,15 @@ function goTown() {
   update(locations[0]);
   saveButton.style.display = "inline-block";
   loadButton.style.display = "inline-block";
-  if (gameCounter == 1) {
+  if (gameCounter >= 1) {
     button4.style.display = "inline-block";
     button4.onclick = fightDemon;
     text.innerText = "You see a sorcerer has visited the town.";
     button5.style.display = "inline-block";
     button5.onclick = goSorcerer;
+  } else {
+    button4.style.display = "none";
+    button5.style.display = "none";
   }
 }
 
@@ -386,7 +389,7 @@ function attack() {
   if (health <= 0) {
     lose();
   } else if (monsterHealth <= 0) {
-    fighting >=2 ? winGame() : defeatMonster();
+    fighting >=5 ? winGame() : defeatMonster();
   }
   if (Math.random() <= .1 && inventory.length !== 1) {
     text.innerText += " Your " + inventory.pop() + " breaks.";
@@ -408,11 +411,23 @@ function dodge() {
 }
 
 function magicAttack() {
-  text.innerText = "You attack the " + monsters[fighting].name + " with your " + spells[playerspells] + ".";
-  monsterHealth -= magic[playerspells].power;
+  text.innerText = "The " + monsters[fighting].name + " attacks.";
+  text.innerText += "You attack the " + monsters[fighting].name + " with your " + spells[playerspells] + ".";
+  health -= getMonsterAttackValue(monsters[fighting].level);
+  if(isMonsterHit()) {
+    monsterHealth -= magic[playerspells].power + Math.floor(Math.random() * xp) + 1 + level*1.5;
+  } else {
+    text.innerText += " You miss.";
+  }
+  healthText.innerText = health;
   monsterHealthText.innerText = monsterHealth;
   if (monsterHealth <= 0) {
-    fighting >=2 ? winGame() : defeatMonster();
+    fighting >=5 ? winGame() : defeatMonster();
+  }
+  if (health <= 0) {
+    lose();
+  } else if (monsterHealth <= 0) {
+    fighting >=5 ? winGame() : defeatMonster();
   }
 }
 
@@ -460,6 +475,8 @@ function restart() {
   xpText.innerText = xp;
   levelText.innerText = level;
   gameCounter = 0;
+  button4.style.display = "none";
+  button5.style.display = "none";
   goTown();
 }
 
@@ -548,3 +565,5 @@ function pick(guess) {
     }
   }
 }
+
+goTown();
