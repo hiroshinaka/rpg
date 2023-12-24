@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./style.css">
+    <title>RPG</title>
+    <script src="https://kit.fontawesome.com/6145151687.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="game">
+        <div id="stats">
+            <span class="stat">Lv: <strong><span id="levelText">1</span></strong></span>
+            <span class="stat">XP: <strong><span id="xpText">0</span></strong></span>
+            <span class="stat"><i class="fa-solid fa-heart"></i> <strong><span id="healthText">100</span></strong></span>
+            <span class="stat"><i class="fa-solid fa-coins"></i> <strong><span id="goldText">50</span></strong></span>
+        </div>
+        <div id="controls">
+            <button id="button1">Go to store</button>
+            <button id="button2">Go to cave</button>
+            <button id="button3">Fight Dragon</button>
+            <button id="button4">Fight Demon</button>            
+            <button id="button5">Go to Sorcerer</button>
+        </div>
+        <div id="monsterStats">
+            <span class="stat">Monster Name: <strong><span id="monsterName"></span></strong></span>
+            <span class="stat">Health: <strong><span id="monsterHealth"></span></strong></span>
+        </div>
+        <div id="text">
+            Welcome adventurer. You must defeat the dragon that is terrorizing the town. You are in the town square. Where do you want to go? Use the buttons above.
+        </div>
+        <div id="imageContainer">
+            <img id="image" src="./img/town.png" alt="Town">
+        </div>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>
