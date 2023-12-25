@@ -76,8 +76,52 @@ body {
     display: block; 
 }
 
-
+#bottomControls{
+    margin-top: 2%;
+}
 
 #button4, #button5 {
     display: none;
+}
+
+#inventory {
+  background-color: white;
+  color: black;
+  padding: 10px;
+  border: 1px solid black;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  display: none; 
+  box-sizing: border-box; 
+}
+
+#inventoryTitle {
+  text-align: center;
+  background-color: #0a0a23; 
+  color: white;
+  padding: 10px;
+  margin: -10px -10px 10px -10px;
+  box-sizing: border-box; 
+}
+
+
+#inventoryList {
+  list-style-type: none;
+  padding: 0;
+}
+
+#inventoryList li {
+  margin: 5px 0;
+}
+
+#closeInventoryButton {
+  display: block;
+  margin: 10px auto;
+  padding: 5px 10px;
+  background-color: #feac32;
+  border: none;
+  cursor: pointer;
 }

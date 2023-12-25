@@ -1,14 +1,19 @@
 let xp = 0;
 let health = 100;
-let gold = 50;
+let gold = 19000;
 let currentWeapon = 0;
 let fighting;
 let monsterHealth;
-let inventory = ["stick"];
+let inventory = [  { 
+  name: 'Stick', 
+  power: 5,
+  enchanted: false,
+  img: '<i class="fa-solid fa-slash"></i>'
+}];
 let playerspells = 0;
 let playerMana = 100;
 let spells =[];
-let gameCounter = 0;
+let gameCounter = 1;
 let level = 1;
 
 const button1 = document.querySelector('#button1');
@@ -16,60 +21,78 @@ const button2 = document.querySelector("#button2");
 const button3 = document.querySelector("#button3");
 const button4 = document.querySelector("#button4");
 const button5 = document.querySelector("#button5");
+
 const text = document.querySelector("#text");
 const xpText = document.querySelector("#xpText");
 const healthText = document.querySelector("#healthText");
+const manaText = document.querySelector("#manaText");
 const goldText = document.querySelector("#goldText");
+
 const monsterStats = document.querySelector("#monsterStats");
 const monsterName = document.querySelector("#monsterName");
 const monsterHealthText =document.querySelector("#monsterHealth");
+
 const image = document.querySelector("#image");
+
 const saveButton = document.querySelector("#saveButton");
 const loadButton = document.querySelector("#loadButton");
 
+const inventoryButton = document.querySelector("#inventoryButton");
+const closeInventoryButton = document.querySelector("#closeInventoryButton");
+const inventoryDiv = document.querySelector("#inventory");
+const inventoryList = document.querySelector("#inventoryList");
 
 const weapons = [
   { 
-    name: 'stick', 
+    name: 'Stick', 
     power: 5,
-    enchanted: false
+    enchanted: false,
+    img: '<i class="fa-solid fa-slash"></i>'
   },
   { 
-    name: 'dagger', 
+    name: 'Dagger', 
     power: 30,
-    enchanted: false
+    enchanted: false,
+    img: '🗡️'
   },
   { 
-    name: 'claw hammer', 
+    name: 'War hammer', 
     power: 50,
-    enchanted: false
+    enchanted: false,
+    img: '🔨'
   },
   { 
-    name: 'sword', 
+    name: 'Sword', 
     power: 100,
-    enchanted: false
+    enchanted: false,
+    img: '⚔️'
   }
 ];
 const magic = [
   {
-    name: "fire",
+    name: "Fire ball",
     power: 100,
-    mana: 30
+    mana: 30,
+    img: '🔥'
   },
   {
-    name: "ice",
+    name: "Ice shards",
     power: 200,
-    mana: 50
+    mana: 50,
+    img: '❄️'
   },
   {
-    name: "earth",
+    name: "Lava burst",
     power: 300,
-    mana: 70
+    mana: 70,
+    img:'🌋'
+
   },
   {
-    name: "lightning",
+    name: "Lightning Storm",
     power: 400,
-    mana: 90
+    mana: 90,
+    img: '⚡'
   }
 ];
 const monsters = [
@@ -163,8 +186,8 @@ const locations = [
     },
     { 
         name: "win", 
-        "button text": ["REPLAY?", "REPLAY?", "REPLAY?"], 
-        "button functions": [restart, restart, restart], 
+        "button text": ["Go to Town square", "Go to Town square", "Go to Town square"], 
+        "button functions": [goTown, goTown, easterEgg], 
         text: "You defeat the dragon! YOU WIN THE GAME! 🎉",
         image: "./img/victory.png"
     },
@@ -192,6 +215,32 @@ saveButton.onclick = saveGame;
 loadButton.onclick = loadGame;
 saveButton.style.display = "inline-block";
 loadButton.style.display = "inline-block";
+inventoryButton.style.display = "inline-block";
+
+inventoryButton.addEventListener("click", function() {
+  updateInventoryList();
+  inventoryDiv.style.display = "block";
+});
+
+closeInventoryButton.addEventListener("click", function() {
+  inventoryDiv.style.display = "none";
+});
+
+function updateInventoryList() {
+  inventoryList.innerHTML = "";
+
+  inventory.forEach(item => {
+    let listItem = document.createElement("li");
+    listItem.innerHTML = item.img + ' ' + item.name; 
+    inventoryList.appendChild(listItem);
+  });
+
+  spells.forEach(spell => {
+    let listItem = document.createElement("li");
+    listItem.innerHTML = spell.img + ' ' + spell.name; 
+    inventoryList.appendChild(listItem);
+  });
+}
 
 function update(location) {
   monsterStats.style.display = "none";
@@ -249,7 +298,6 @@ function updateUI() {
   levelText.innerText = level;
 }
 
-
 function goTown() {
   update(locations[0]);
   saveButton.style.display = "inline-block";
@@ -300,10 +348,14 @@ function buyWeapon() {
       gold -= 30;
       currentWeapon++;
       goldText.innerText = gold;
-      let newWeapon = weapons[currentWeapon].name;
-      text.innerText = "You now have a " + newWeapon + ".";
+      let newWeaponName = weapons[currentWeapon].name;
+      let newWeapon = weapons[currentWeapon];
+      text.innerText = "You now have a " + newWeaponName + ".";
       inventory.push(newWeapon);
-      text.innerText += " In your inventory you have: " + inventory;
+      text.innerText += " In your inventory you have: ";
+      for (let i = 0; i < inventory.length; i++) {
+        text.innerText += inventory[i].name + ", ";
+      }
     } else {
       text.innerText = "You do not have enough gold to buy a weapon.";
     }
@@ -456,10 +508,13 @@ function defeatMonster() {
     xp = xp - levelCap;
     text.innerText += " You leveled up to level " + level + "!" + " You gained xp " + xp;
     health += 10;
+    mana+= 50;
     levelCap = Math.floor(levelCap *= 1.5);
   }
   levelText.innerText = level;
   xpText.innerText = xp;
+  manaText.innerText = playerMana;
+  healthText.innerText = health;
   button4.style.display = "none";
   button5.style.display = "none";
   saveButton.style.display = "none";
@@ -497,12 +552,15 @@ function restart() {
 
 function goSorcerer() {
   update(locations[8]);
+  if (spells.length > 1){
+    text.innerText = "You visit the sorcerer.";
+  }
   button4.style.display = "none";
   button5.style.display = "none";
   saveButton.style.display = "none";
   loadButton.style.display = "none";
   if (spells.length == 0){
-    let newSpell = magic[playerspells].name;
+    let newSpell = magic[playerspells];
     spells.push(newSpell);
   }
 }
@@ -515,14 +573,18 @@ function buySpell() {
       gold -= 100;
       playerspells++;
       goldText.innerText = gold;
-      let newSpell = magic[playerspells].name;
-      text.innerText = "You now have a " + newSpell + " spell.";
+      let newSpellName = magic[playerspells].name;
+      let newSpell = magic[playerspells];
+      text.innerText = "You now have a " + newSpellName + " spell.";
       spells.push(newSpell);
-      text.innerText += " In your grimmoire you have: " + spells;
-  } else {
-    text.innerText = "You do not have enough gold to buy a spell.";
+      text.innerText += " In your grimmoire you have: ";
+      for (let i = 0; i < spells.length; i++) {
+        text.innerText += spells[i].name + ", ";
+      }
+    } else {
+      text.innerText = "You do not have enough gold to buy a spell.";
     }
-  }else {
+  } else {
     text.innerText = "You already have the most powerful spell!";
   }
 }
