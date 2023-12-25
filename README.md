@@ -2,4 +2,5 @@ Simple RPG created using the guide from FreeCodeCamp which I decided to flesh ou
 - Save and Load Mechanic
 - Random Monster encounter
 - Magic system
+- Inventory 
 - Post-game content
