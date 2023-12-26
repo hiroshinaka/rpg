@@ -31,17 +31,18 @@ body {
     color: #0a0a23;
   }
   #controls button {
-    display: block;
-    width: 100%;
-    margin-bottom: 10px;
-  }
-  
-  @media screen and (min-width: 768px) {
-    #controls button {
-      display: inline-block;
-      width: auto;
+    display: inline-block;
+    margin-right: 5px; /* Adjust the margin as per your design */
+    /* Specify a width that allows all buttons to fit in one line */
+    width: calc(33% - 10px); /* Example width, adjust as needed */
+}
+
+@media screen and (min-width: 768px) {
+    #controls {
+        text-align: center;
     }
-  }
+}
+
   
   
   #monsterStats {
@@ -63,6 +64,7 @@ body {
     background-color: #feac32;
     background-image: linear-gradient(#fecc4c, #ffac33);
     border: 3px solid #feac32;
+    margin-top: 5px;
   }
   #imageContainer img {
     max-width: 100%;
@@ -83,6 +85,7 @@ body {
 #button4, #button5 {
     display: none;
 }
+
 
 #inventory {
   background-color: white;
@@ -116,8 +119,42 @@ body {
 #inventoryList li {
   margin: 5px 0;
 }
+#spellSelection {
+  background-color: white;
+  color: black;
+  padding: 10px;
+  border: 1px solid black;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  display: none; /* Initially hidden */
+  box-sizing: border-box; 
+  width: 80%; /* Adjust width as needed */
+  max-width: 400px; /* Adjust max-width as needed */
+}
 
-#closeInventoryButton {
+#spellSelectionTitle {
+  text-align: center;
+  background-color: #0a0a23; 
+  color: white;
+  padding: 10px;
+  margin: -10px -10px 10px -10px;
+  box-sizing: border-box;
+}
+
+#spellList {
+  list-style-type: none;
+  padding: 0;
+}
+
+#spellList li {
+  margin: 5px 0;
+  cursor: pointer; /* To indicate clickable items */
+}
+
+#closeSpellWindowButton {
   display: block;
   margin: 10px auto;
   padding: 5px 10px;

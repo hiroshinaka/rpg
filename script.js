@@ -1,6 +1,6 @@
 let xp = 0;
 let health = 100;
-let gold = 50;
+let gold = 500;
 let currentWeapon = 0;
 let fighting;
 let monsterHealth;
@@ -13,7 +13,7 @@ let inventory = [  {
 let playerspells = 0;
 let playerMana = 100;
 let spells =[];
-let gameCounter = 0;
+let gameCounter = 1;
 let level = 1;
 
 const button1 = document.querySelector('#button1');
@@ -41,6 +41,10 @@ const inventoryButton = document.querySelector("#inventoryButton");
 const closeInventoryButton = document.querySelector("#closeInventoryButton");
 const inventoryDiv = document.querySelector("#inventory");
 const inventoryList = document.querySelector("#inventoryList");
+
+const spellSelectionDiv = document.querySelector("#spellSelection");
+const spellList = document.querySelector("#spellList");
+const closeSpellWindowButton = document.querySelector("#closeSpellWindowButton");
 
 const weapons = [
   { 
@@ -144,63 +148,65 @@ const monsterEncounter =[fightSlime, fightGoblin, fightBeast, fightOgre, fightGo
 const locations = [
     {
         name: "town square",
-        "button text": ["Go to store", "Go to cave", "Fight dragon"],
+        "button text": ["🛖 Go to store ", "🕳️ Go to cave", " 🐲 Fight dragon"],
         "button functions": [goStore, goCave, fightDragon],
         text: "You are in the town square. You see a sign that says \"Store\".",
         image: "./img/town.png"
     },
     {
         name: "store",
-        "button text": ["Buy 10 health (10 gold)", "Buy weapon (30 gold)", "Go to town square"],
-        "button functions": [buyHealth, buyWeapon, goTown],
+        "button text": ['Buy 10 health (10 <i class="fa-solid fa-coins">)', 
+        'Buy 10 Mana (30 <i class="fa-solid fa-coins">)', 
+        'Buy Weapon (30 <i class="fa-solid fa-coins">)'],
+        "button functions": [buyHealth, buyMana, buyWeapon],
         text: "You enter the store.",
         image: "./img/store.png"
 
     },
     {
         name: "cave",
-        "button text": ["Take the left path", "Take the right path", "Go to town square"],
+        "button text": ["Take the left path", "Take the right path", "🏘️Go to town square"],
         "button functions": [randomMonsterEncounter, randomMonsterEncounter, goTown],
-        text: "You enter the cave. You see some monsters.",
+        text: "You enter the cave. You see the cave splits into two paths.",
         image: "./img/cave.png"
     },
     {
         name: "fight",
-        "button text": ["Attack", "Dodge", "Run"],
+        "button text": ["⚔️ Attack", "🛡️ Dodge", "Run"],
         "button functions": [attack, dodge, goTown],
         text: "You are fighting a monster."
     },
     {
         name: "kill monster",
-        "button text": ["Go to town square", "Go to town square", "Go to town square"],
+        "button text": [" 🏘️ Go to town square", "🏘️ Go to town square", "🏘️ Go to town square"],
         "button functions": [goTown, goTown, easterEgg],
         text: 'The monster screams "Arg!" as it dies. You gain experience points and find gold.',
         image: "./img/win.png"
     },
     {
         name: "lose",
-        "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
+        "button text": ["🔁 REPLAY?", "🔁 REPLAY?", "🔁 REPLAY?"],
         "button functions": [restart, restart, restart],
         text: "You were defeated. ☠️",
         image: "./img/lose.png"
     },
     { 
         name: "win", 
-        "button text": ["Go to Town square", "Go to Town square", "Go to Town square"], 
+        "button text": ["🏘️ Go to Town square", "🏘️ Go to Town square", "🃏 Go to Town square"], 
         "button functions": [goTown, goTown, easterEgg], 
         text: "You defeat the dragon! YOU WIN THE GAME! 🎉",
         image: "./img/victory.png"
     },
     {
         name: "easter egg",
-        "button text": ["2", "8", "Go to town square?"],
+        "button text": ["2️⃣", "8️⃣", "🏘️ Go to town square?"],
         "button functions": [pickTwo, pickEight, goTown],
         text: "You find a secret game. Pick a number above. Ten numbers will be randomly chosen between 0 and 10. If the number you choose matches one of the random numbers, you win!",
         image: "./img/minigame.png"
     },
     {
       name: "sorcerer",
-      "button text": ["Buy Spell (100 Gold)", "Enchant Weapon (50 Gold)", "Go to town square"],
+      "button text": ["🪄 Buy Spell (100 Gold)", "⚔️ Enchant Weapon (50 Gold)", "🏘️ Go to town square"],
       "button functions": [buySpell, enchantWeapon, goTown],
       text: "You encounter a sorcerer. He gifts you the fire spell for defeating the dragon.",
       image: "./img/sorcerer.png"
@@ -217,6 +223,7 @@ saveButton.style.display = "inline-block";
 loadButton.style.display = "inline-block";
 inventoryButton.style.display = "inline-block";
 
+//Inventory Functions
 inventoryButton.addEventListener("click", function() {
   updateInventoryList();
   inventoryDiv.style.display = "block";
@@ -241,18 +248,19 @@ function updateInventoryList() {
     inventoryList.appendChild(listItem);
   });
 }
-
+//Function to update the game locations from the array location
 function update(location) {
   monsterStats.style.display = "none";
-  button1.innerText = location["button text"][0];
-  button2.innerText = location["button text"][1];
-  button3.innerText = location["button text"][2];
+  button1.innerHTML = location["button text"][0];
+  button2.innerHTML = location["button text"][1];
+  button3.innerHTML = location["button text"][2];
   button1.onclick = location["button functions"][0];
   button2.onclick = location["button functions"][1];
   button3.onclick = location["button functions"][2];
   text.innerText = location.text;
   image.src = location.image;
 }
+//Function to save and load the game 
 function saveGame() {
   const gameState = {
       xp: xp,
@@ -269,7 +277,6 @@ function saveGame() {
   localStorage.setItem('gameState', JSON.stringify(gameState));
   alert('Game saved!');
 }
-
 function loadGame() {
   const savedState = localStorage.getItem('gameState');
 
@@ -298,13 +305,14 @@ function updateUI() {
   levelText.innerText = level;
 }
 
+//Function to go to the town square. 
 function goTown() {
   update(locations[0]);
   saveButton.style.display = "inline-block";
   loadButton.style.display = "inline-block";
   if (gameCounter >= 1) {
     button4.style.display = "inline-block";
-    button4.innerText = "Fight Demon";
+    button4.innerText = "💀 Fight Demon";
     button4.onclick = fightDemon;
     text.innerText = "You see a sorcerer has visited the town.";
     button5.style.display = "inline-block";
@@ -314,15 +322,18 @@ function goTown() {
     button5.style.display = "none";
   }
 }
-
+//Function to go to the store
 function goStore() {
   update(locations[1]);
-  button4.style.display = "none";
+  button4.style.display = "inline-block"; 
+  button4.innerText = "Go to town square";
+  button4.onclick = goTown;
   button5.style.display = "none";
   saveButton.style.display = "none";
   loadButton.style.display = "none";
 }
 
+//Function to go to the cave
 function goCave() {
   update(locations[2]); 
   button4.style.display = "none";
@@ -330,7 +341,7 @@ function goCave() {
   saveButton.style.display = "none";
   loadButton.style.display = "none";
 }
-
+//Function to buy health from the store
 function buyHealth() {
   if (gold >= 10) {
     gold -= 10;
@@ -341,7 +352,18 @@ function buyHealth() {
     text.innerText = "You do not have enough gold to buy health.";
   }
 }
-
+//Function to buy mana from the store
+function buyMana() {
+  if (gold >= 10) {
+    gold -= 10;
+    playerMana += 10;
+    goldText.innerText = gold;
+    manaText.innerText = playerMana;
+  } else {
+    text.innerText = "You do not have enough gold to buy mana.";
+  }
+}
+//Function to buy weapons from the store
 function buyWeapon() {
   if (currentWeapon < weapons.length - 1) {
     if (gold >= 30) {
@@ -365,7 +387,7 @@ function buyWeapon() {
     button2.onclick = sellWeapon;
   }
 }
-
+//Function to sell weapons from the store when all weapons are bought
 function sellWeapon() {
   if (inventory.length > 1) {
     gold += 15;
@@ -377,33 +399,27 @@ function sellWeapon() {
     text.innerText = "Don't sell your only weapon!";
   }
 }
-
-
+//Functions to fight various monsters. Picks a random monster from the array monsters
 function fightSlime() {
   fighting = 0;
   goFight();
 }
-
 function fightGoblin() {
   fighting = 1;
   goFight();
 }
-
 function fightBeast() {
   fighting = 2;
   goFight();
 }
-
 function fightOgre() {
   fighting = 3;
   goFight();
 }
-
 function fightGoblinKing() {
   fighting = 4;
   goFight();
 }
-
 function fightDragon() {
   fighting = 5;
   goFight();
@@ -412,6 +428,7 @@ function fightDemon() {
   fighting = 6;
   goFight();
 }
+//Function to fight the monster
 function goFight() {
   update(locations[3]);
   image.src = monsters[fighting].image;
@@ -425,15 +442,16 @@ function goFight() {
   if (spells.length > 0) {
     button4.style.display = "inline-block";
     button4.onclick = goTown;
-    button4.innerText = "Run";
+    button4.innerText = "🏃 Run";
     button3.style.display = "inline-block";
     button3.onclick = magicAttack;
-    button3.innerText = "Magic";
+    button3.innerText = "📕 Magic";
   } else {
     button4.style.display = "none";
   }
 }
 
+//Attack Function during fight
 function attack() {
   text.innerText = "The " + monsters[fighting].name + " attacks.";
   text.innerText += " You attack it with your " + weapons[currentWeapon].name + ".";
@@ -455,29 +473,39 @@ function attack() {
     currentWeapon--;
   }
 }
-
+//Function to get the monster attack value
 function getMonsterAttackValue(level) {
   const hit = (level * 5) - (Math.floor(Math.random() * xp));
   return hit > 0 ? hit : 0;
 }
-
+//Function to check if player attack hits
 function isMonsterHit() {
   return Math.random() > .2 || health < 20;
 }
-
+//Funcktion to dodge attack from monster
 function dodge() {
   text.innerText = "You dodge the attack from the " + monsters[fighting].name;
 }
-
+//Function to
 function magicAttack() {
-  if (playerMana >= magic[playerspells].mana) {
-    playerMana -= magic[playerspells].mana;
+  spellSelectionDiv.style.display = "block";
+  spellList.innerHTML = "";
+  spells.forEach((spell, index) => {
+    let listItem = document.createElement("li");
+    listItem.innerHTML = spell.img + ' ' + spell.name;
+    listItem.addEventListener("click", ()=> useSpell(index));
+    spellList.appendChild(listItem);
+  });
+}
+function useSpell(spellIndex) {
+  if (playerMana >= magic[spellIndex].mana) {
+    playerMana -= magic[spellIndex].mana;
     manaText.innerText = playerMana;
     text.innerText = "The " + monsters[fighting].name + " attacks.";
-    text.innerText += "You attack the " + monsters[fighting].name + " with your " + spells[playerspells] + ".";
+    text.innerText += "You attack the " + monsters[fighting].name + " with your " + spells[spellIndex].name + ".";
     health -= getMonsterAttackValue(monsters[fighting].level);
     if(isMonsterHit()) {
-      monsterHealth -= magic[playerspells].power + Math.floor(Math.random() * xp) + 1 + level*1.5;
+      monsterHealth -= magic[spellIndex].power + Math.floor(Math.random() * xp) + 1 + level*1.5;
     } else {
       text.innerText += " You miss.";
     }
@@ -491,10 +519,16 @@ function magicAttack() {
     } else if (monsterHealth <= 0) {
       fighting >=5 ? winGame() : defeatMonster();
     }
+    spellSelectionDiv.style.display = "none";
   } else {
     text.innerText = "You do not have enough mana to cast a spell.";
+    spellSelectionDiv.style.display = "none";
   }
 }
+
+closeSpellWindowButton.addEventListener("click", function() {
+  spellSelectionDiv.style.display = "none";
+});
 
 function defeatMonster() {
   update(locations[4]);
@@ -505,10 +539,10 @@ function defeatMonster() {
   console.log(xp);
   if (xp >= levelCap) {
     level++;
+    text.innerText += " You gained " + xp + " xp and leveled up! You are now level " + level + ".";
     xp = xp - levelCap;
-    text.innerText += " You leveled up to level " + level + "!" + " You gained xp " + xp;
     health += 10;
-    mana+= 50;
+    playerMana+= 50;
     levelCap = Math.floor(levelCap *= 1.5);
   }
   levelText.innerText = level;
@@ -643,4 +677,3 @@ function pick(guess) {
   }
 }
 
-goTown();

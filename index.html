@@ -17,11 +17,11 @@
             <span class="stat"><i class="fa-solid fa-coins"></i> <strong><span id="goldText">50</span></strong></span>
         </div>
         <div id="controls">
-            <button id="button1">Go to store</button>
-            <button id="button2">Go to cave</button>
-            <button id="button3">Fight Dragon</button>
-            <button id="button4">Fight Demon</button>            
-            <button id="button5">Go to Sorcerer</button>
+            <button id="button1">🛖 Go to store</button>
+            <button id="button2">🏞️ Go to cave</button>
+            <button id="button3">🐲 Fight Dragon</button>
+            <button id="button4" style="display: none;"> Fight Demon</button>            
+            <button id="button5" style="display: none;">🧙‍♂️ Go to Sorcerer</button>
         </div>
         <div id="monsterStats">
             <span class="stat">Monster Name: <strong><span id="monsterName"></span></strong></span>
@@ -42,8 +42,12 @@
             <h3 id="inventoryTitle">Inventory</h3>
             <ul id="inventoryList"></ul>
             <button id="closeInventoryButton">Close</button>
-        </div>        
-    </div>
+        </div>
+        <div id="spellSelection" style="display: none;">
+            <h3 id="spellSelectionTitle">Select a spell</h3>
+            <ul id="spellList"></ul>
+            <button id="closeSpellWindowButton">Close</button>
+        </div>
     <script src="./script.js"></script>
 </body>
 </html>
