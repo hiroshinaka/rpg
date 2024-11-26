@@ -31,6 +31,7 @@ function initializeGame() {
 
 let xp = 0;
 let health = 100;
+let maxHealth = 100;
 let gold = 500;
 let currentWeapon = 0;
 let fighting;
@@ -43,8 +44,9 @@ let inventory = [  {
 }];
 let playerspells = 0;
 let playerMana = 100;
+let maxMana = 100;
 let spells =[];
-let gameCounter = 0;
+let gameCounter = 1;
 let level = 1;
 
 const button1 = document.querySelector('#button1');
@@ -90,6 +92,10 @@ saveButton.style.display = "inline-block";
 loadButton.style.display = "inline-block";
 inventoryButton.style.display = "inline-block";
 
+updateHealthBar('player-health-bar', health, maxHealth);
+updateManaBar('player-mana-bar', playerMana, maxMana);
+
+
 //Inventory Functions
 inventoryButton.addEventListener("click", function() {
   updateInventoryList();
@@ -115,6 +121,52 @@ function updateInventoryList() {
     inventoryList.appendChild(listItem);
   });
 }
+//Function to update the health bar
+function updateHealthBar(healthBarId, currentHealth, maxHealth) {
+  const healthBar = document.getElementById(healthBarId);
+  const healthPercentage = (currentHealth / maxHealth) * 100;
+  healthBar.style.width = `${healthPercentage}%`;
+}
+//Function to update the mana bar
+function updateManaBar(manaBarId, currentMana, maxMana) {
+  const manaBar = document.getElementById(manaBarId);
+  const manaPercentage = (currentMana / maxMana) * 100;
+  manaBar.style.width = `${manaPercentage}%`;
+}
+
+function playerTakesDamage(damage) {
+  health -= damage;
+  if (health <= 0) {
+    lose();
+  }
+  healthText.innerText = health;
+  updateHealthBar("player-health-bar", health, maxHealth);
+}
+
+function playerHeals(healAmount) {
+  health += healAmount;
+  if (health > maxHealth) {
+    health = maxHealth;
+  }
+  healthText.innerText = health;
+  updateHealthBar("player-health-bar", health, maxHealth);
+}
+
+function playerUsesMana(manaCost) {
+  playerMana -= manaCost;
+  manaText.innerText = playerMana;
+  updateManaBar('player-mana-bar', playerMana, maxMana);
+}
+
+function playerGainsMana(manaAmount) {
+  playerMana += manaAmount;
+  if (playerMana > maxMana) {
+    playerMana = maxMana;
+  }
+  manaText.innerText = playerMana;
+  updateManaBar("player-mana-bar", playerMana, maxMana);
+}
+
 //Function to update the game locations from the array location
 function update(location) {
   monsterStats.style.display = "none";
@@ -134,6 +186,9 @@ function saveGame() {
   const gameState = {
       xp: xp,
       health: health,
+      maxHealth: maxHealth,
+      playerMana: playerMana,
+      maxMana: maxMana,
       gold: gold,
       currentWeapon: currentWeapon,
       inventory: inventory,
@@ -153,6 +208,9 @@ function loadGame() {
       const gameState = JSON.parse(savedState);
       xp = gameState.xp;
       health = gameState.health;
+      maxHealth = gameState.maxHealth;
+      playerMana = gameState.playerMana;
+      maxMana = gameState.maxMana;
       gold = gameState.gold;
       currentWeapon = gameState.currentWeapon;
       inventory = gameState.inventory;
@@ -234,7 +292,6 @@ function goTown() {
 }
 //Function to go to the store
 function goStore() {
-  console.log('Going to store');
   update(locations.find(loc => loc.name === "store"));
   button4.style.display = "inline-block"; 
   button4.innerText = "Go to town square";
@@ -246,7 +303,6 @@ function goStore() {
 
 //Function to go to the cave
 function goCave() {
-  console.log('Going to cave');
   update(locations.find(loc => loc.name === "cave")); 
   button4.style.display = "none";
   button5.style.display = "none";
@@ -255,24 +311,30 @@ function goCave() {
 }
 //Function to buy health from the store
 function buyHealth() {
-  console.log('Buying health');
-  if (gold >= 10) {
-    gold -= 10;
-    health += 10;
-    goldText.innerText = gold;
-    healthText.innerText = health;
+  if (gold >= 10 && health < maxHealth) {
+    if (health + 10 > maxHealth) {
+      health = maxHealth;
+    } else {
+      gold -= 10;
+      playerHeals(10);
+      goldText.innerText = gold;
+      healthText.innerText = health;
+    }
   } else {
     text.innerText = "You do not have enough gold to buy health.";
   }
 }
 //Function to buy mana from the store
 function buyMana() {
-  console.log('Buying mana');
-  if (gold >= 10) {
-    gold -= 10;
-    playerMana += 10;
-    goldText.innerText = gold;
-    manaText.innerText = playerMana;
+  if (gold >= 10 && playerMana < maxMana) {
+    if (playerMana + 10 > maxMana) {
+      playerMana = maxMana;
+    } else {
+      gold -= 10;
+      playerGainsMana(10);
+      goldText.innerText = gold;
+      manaText.innerText = playerMana;
+    }
   } else {
     text.innerText = "You do not have enough gold to buy mana.";
   }
@@ -370,6 +432,7 @@ function attack() {
   text.innerText = "The " + monsters[fighting].name + " attacks.";
   text.innerText += " You attack it with your " + weapons[currentWeapon].name + ".";
   health -= getMonsterAttackValue(monsters[fighting].level);
+  playerTakesDamage(getMonsterAttackValue(monsters[fighting].level));
   if (isMonsterHit()) {
     monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1 + level*1.5;    
   } else {
@@ -414,6 +477,7 @@ function magicAttack() {
 function useSpell(spellIndex) {
   if (playerMana >= magic[spellIndex].mana) {
     playerMana -= magic[spellIndex].mana;
+    playerUsesMana(magic[spellIndex].mana);
     manaText.innerText = playerMana;
     text.innerText = "The " + monsters[fighting].name + " attacks.";
     text.innerText += "You attack the " + monsters[fighting].name + " with your " + spells[spellIndex].name + ".";

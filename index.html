@@ -12,9 +12,17 @@
         <div id="stats">
             <span class="stat">Lv: <strong><span id="levelText">1</span></strong></span>
             <span class="stat">XP: <strong><span id="xpText">0</span></strong></span>
-            <span class="stat"><i class="fa-solid fa-heart"></i> <strong><span id="healthText">100</span></strong></span>
-            <span class="stat"><i class="fa-solid fa-flask"></i> <strong><span id="manaText">100</span></strong></span>
             <span class="stat"><i class="fa-solid fa-coins"></i> <strong><span id="goldText">500</span></strong></span>
+            <div id="bars-container">
+                <span class="stat"><i class="fa-solid fa-heart"></i> <strong><span id="healthText">100</span></strong></span>
+                <div id="player-health-bar-container">
+                    <div id="player-health-bar"></div>
+                </div>
+                <span class="stat"><i class="fa-solid fa-flask"></i> <strong><span id="manaText">100</span></strong></span>
+                <div id="player-mana-bar-container">
+                    <div id="player-mana-bar"></div>
+            </div>
+            
         </div>
         <div id="controls">
             <button id="button1">🛖 Go to store</button>
