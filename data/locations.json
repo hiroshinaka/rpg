@@ -1,0 +1,66 @@
+[
+    {
+        "name": "town square",
+        "button text": ["🛖 Go to store ", "🏔️ Go to cave", " 🐲 Fight dragon"],
+        "button functions": ["goStore", "goCave", "fightDragon"],
+        "text": "You are in the town square. You see a sign that says \"Store\".",
+        "image": "./img/town.png"
+    },
+    {
+        "name": "store",
+        "button text": ["Buy 10 health (10 Gold)", 
+        "Buy 10 Mana (30 Gold)", 
+        "Buy Weapon (30 Gold)"],
+        "button functions": ["buyHealth", "buyMana", "buyWeapon"],
+        "text": "You enter the store.",
+        "image": "./img/store.png"
+    },
+    {
+        "name": "cave",
+        "button text": ["Take the left path", "Take the right path", "🏘️Go to town square"],
+        "button functions": ["randomMonsterEncounter", "randomMonsterEncounter", "goTown"],
+        "text": "You enter the cave. You see the cave splits into two paths.",
+        "image": "./img/cave.png"
+    },
+    {
+        "name": "fight",
+        "button text": ["⚔️ Attack", "🛡️ Dodge", "Run"],
+        "button functions": ["attack", "dodge", "goTown"],
+        "text": "You are fighting a monster."
+    },
+    {
+        "name": "kill monster",
+        "button text": [" 🏘️ Go to town square", "🏘️ Go to town square", "🏘️ Go to town square"],
+        "button functions": ["goTown", "goTown", "easterEgg"],
+        "text": "The monster screams \"Arg!\" as it dies. You gain experience points and find gold.",
+        "image": "./img/win.png"
+    },
+    {
+        "name": "lose",
+        "button text": ["🔁 REPLAY?", "🔁 REPLAY?", "🔁 REPLAY?"],
+        "button functions": ["restart", "restart", "restart"],
+        "text": "You were defeated. ☠️",
+        "image": "./img/lose.png"
+    },
+    { 
+        "name": "win", 
+        "button text": ["🏘️ Go to Town square", "🏘️ Go to Town square", "🃏 Go to Town square"], 
+        "button functions": ["goTown", "goTown", "easterEgg"], 
+        "text": "You defeat the dragon! YOU WIN THE GAME! 🎉",
+        "image": "./img/victory.png"
+    },
+    {
+        "name": "easter egg",
+        "button text": ["2️⃣", "8️⃣", "🏘️ Go to town square?"],
+        "button functions": ["pickTwo", "pickEight", "goTown"],
+        "text": "You find a secret game. Pick a number above. Ten numbers will be randomly chosen between 0 and 10. If the number you choose matches one of the random numbers, you win!",
+        "image": "./img/minigame.png"
+    },
+    {
+      "name": "sorcerer",
+      "button text": ["🪄 Buy Spell (100 Gold)", "⚔️ Enchant Weapon (50 Gold)", "🏘️ Go to town square"],
+      "button functions": ["buySpell", "enchantWeapon", "goTown"],
+      "text": "You encounter a sorcerer. He gifts you the fire spell for defeating the dragon.",
+      "image": "./img/sorcerer.png"
+    }
+]

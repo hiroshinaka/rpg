@@ -1,3 +1,34 @@
+let locations = [];
+let monsters = [];
+let weapons = [];
+let magic = [];
+
+Promise.all([
+  fetch('./data/locations.json').then(response => response.json()),
+  fetch('./data/monsters.json').then(response => response.json()),
+  fetch('./data/weapons.json').then(response => response.json()),
+  fetch('./data/magic.json').then(response => response.json())
+])
+.then(data => {
+  locations = data[0];
+  monsters = data[1];
+  weapons = data[2];
+  magic = data[3];
+  // You can call any function here that needs to use the loaded data
+  initializeGame();
+})
+.catch(error => console.error('Error loading data:', error));
+
+// Example function to initialize the game
+function initializeGame() {
+  console.log('Locations loaded:', locations);
+  console.log('Monsters loaded:', monsters);
+  console.log('Weapons loaded:', weapons);
+  console.log('Magic loaded:', magic);
+  // Your game initialization code here
+}
+
+
 let xp = 0;
 let health = 100;
 let gold = 500;
@@ -13,7 +44,7 @@ let inventory = [  {
 let playerspells = 0;
 let playerMana = 100;
 let spells =[];
-let gameCounter = 1;
+let gameCounter = 0;
 let level = 1;
 
 const button1 = document.querySelector('#button1');
@@ -46,172 +77,8 @@ const spellSelectionDiv = document.querySelector("#spellSelection");
 const spellList = document.querySelector("#spellList");
 const closeSpellWindowButton = document.querySelector("#closeSpellWindowButton");
 
-const weapons = [
-  { 
-    name: 'Stick', 
-    power: 5,
-    enchanted: false,
-    img: '<i class="fa-solid fa-slash"></i>'
-  },
-  { 
-    name: 'Dagger', 
-    power: 30,
-    enchanted: false,
-    img: '🗡️'
-  },
-  { 
-    name: 'War hammer', 
-    power: 50,
-    enchanted: false,
-    img: '🔨'
-  },
-  { 
-    name: 'Sword', 
-    power: 100,
-    enchanted: false,
-    img: '⚔️'
-  }
-];
-const magic = [
-  {
-    name: "Fire ball",
-    power: 100,
-    mana: 30,
-    img: '🔥'
-  },
-  {
-    name: "Ice shards",
-    power: 200,
-    mana: 50,
-    img: '❄️'
-  },
-  {
-    name: "Lava burst",
-    power: 300,
-    mana: 70,
-    img:'🌋'
 
-  },
-  {
-    name: "Lightning Storm",
-    power: 400,
-    mana: 90,
-    img: '⚡'
-  }
-];
-const monsters = [
-  {
-    name: "Slime",
-    level: 2,
-    health: 15,
-    image: "./img/slime.png"
-  },
-  {
-    name: "Goblin",
-    level: 5,
-    health: 30,
-    image: "./img/goblin.png"
-  },
-  {
-    name: "Fanged Beast",
-    level: 8,
-    health: 60,
-    image: "./img/fangedbeast.png"
-  },
-  {
-    name: "Ogre",
-    level: 15,
-    health: 100,
-    image: "./img/ogre.png"
-  },
-  {
-    name: "Goblin King",
-    level: 20,
-    health: 200,
-    image: "./img/goblinking.png"
-  },
-  {
-    name: "Dragon",
-    level: 20,
-    health: 300,
-    image:"./img/dragon.png"
-  },
-  {
-    name: "Demon",
-    level: 50,
-    health: 1000,
-    image: "./img/demon.png"
-  }
-]
 const monsterEncounter =[fightSlime, fightGoblin, fightBeast, fightOgre, fightGoblinKing];
-
-const locations = [
-    {
-        name: "town square",
-        "button text": ["🛖 Go to store ", "🕳️ Go to cave", " 🐲 Fight dragon"],
-        "button functions": [goStore, goCave, fightDragon],
-        text: "You are in the town square. You see a sign that says \"Store\".",
-        image: "./img/town.png"
-    },
-    {
-        name: "store",
-        "button text": ['Buy 10 health (10 <i class="fa-solid fa-coins">)', 
-        'Buy 10 Mana (30 <i class="fa-solid fa-coins">)', 
-        'Buy Weapon (30 <i class="fa-solid fa-coins">)'],
-        "button functions": [buyHealth, buyMana, buyWeapon],
-        text: "You enter the store.",
-        image: "./img/store.png"
-
-    },
-    {
-        name: "cave",
-        "button text": ["Take the left path", "Take the right path", "🏘️Go to town square"],
-        "button functions": [randomMonsterEncounter, randomMonsterEncounter, goTown],
-        text: "You enter the cave. You see the cave splits into two paths.",
-        image: "./img/cave.png"
-    },
-    {
-        name: "fight",
-        "button text": ["⚔️ Attack", "🛡️ Dodge", "Run"],
-        "button functions": [attack, dodge, goTown],
-        text: "You are fighting a monster."
-    },
-    {
-        name: "kill monster",
-        "button text": [" 🏘️ Go to town square", "🏘️ Go to town square", "🏘️ Go to town square"],
-        "button functions": [goTown, goTown, easterEgg],
-        text: 'The monster screams "Arg!" as it dies. You gain experience points and find gold.',
-        image: "./img/win.png"
-    },
-    {
-        name: "lose",
-        "button text": ["🔁 REPLAY?", "🔁 REPLAY?", "🔁 REPLAY?"],
-        "button functions": [restart, restart, restart],
-        text: "You were defeated. ☠️",
-        image: "./img/lose.png"
-    },
-    { 
-        name: "win", 
-        "button text": ["🏘️ Go to Town square", "🏘️ Go to Town square", "🃏 Go to Town square"], 
-        "button functions": [goTown, goTown, easterEgg], 
-        text: "You defeat the dragon! YOU WIN THE GAME! 🎉",
-        image: "./img/victory.png"
-    },
-    {
-        name: "easter egg",
-        "button text": ["2️⃣", "8️⃣", "🏘️ Go to town square?"],
-        "button functions": [pickTwo, pickEight, goTown],
-        text: "You find a secret game. Pick a number above. Ten numbers will be randomly chosen between 0 and 10. If the number you choose matches one of the random numbers, you win!",
-        image: "./img/minigame.png"
-    },
-    {
-      name: "sorcerer",
-      "button text": ["🪄 Buy Spell (100 Gold)", "⚔️ Enchant Weapon (50 Gold)", "🏘️ Go to town square"],
-      "button functions": [buySpell, enchantWeapon, goTown],
-      text: "You encounter a sorcerer. He gifts you the fire spell for defeating the dragon.",
-      image: "./img/sorcerer.png"
-    }
-];
 
 // initialize buttons
 button1.onclick = goStore;
@@ -259,6 +126,8 @@ function update(location) {
   button3.onclick = location["button functions"][2];
   text.innerText = location.text;
   image.src = location.image;
+  initializeButtons(location);
+
 }
 //Function to save and load the game 
 function saveGame() {
@@ -305,9 +174,50 @@ function updateUI() {
   levelText.innerText = level;
 }
 
+const functionMapping = {
+  goTown,
+  goStore,
+  goCave,
+  fightDragon,
+  buyHealth,
+  buyMana,
+  buyWeapon,
+  sellWeapon,
+  attack,
+  dodge,
+  magicAttack,
+  useSpell,
+  defeatMonster,
+  lose,
+  winGame,
+  restart,
+  goSorcerer,
+  goElement,
+  buySpell,
+  enchantWeapon,
+  randomMonsterEncounter,
+  easterEgg,
+  pickTwo,
+  pickEight
+}
+
+function initializeButtons(location) {
+  const buttons = [button1, button2, button3, button4, button5];
+  location["button functions"].forEach((funcName, index) => {
+      if (functionMapping[funcName]) {
+          buttons[index].onclick = functionMapping[funcName];
+          buttons[index].innerText = location["button text"][index];
+          buttons[index].style.display = "inline-block";
+      } else {
+          console.log(`Hiding button ${index + 1} due to missing function mapping for "${funcName}"`);
+          buttons[index].style.display = "none";
+      }
+  });
+}
+
 //Function to go to the town square. 
 function goTown() {
-  update(locations[0]);
+  update(locations.find(loc => loc.name === "town square"));
   saveButton.style.display = "inline-block";
   loadButton.style.display = "inline-block";
   if (gameCounter >= 1) {
@@ -324,7 +234,8 @@ function goTown() {
 }
 //Function to go to the store
 function goStore() {
-  update(locations[1]);
+  console.log('Going to store');
+  update(locations.find(loc => loc.name === "store"));
   button4.style.display = "inline-block"; 
   button4.innerText = "Go to town square";
   button4.onclick = goTown;
@@ -335,7 +246,8 @@ function goStore() {
 
 //Function to go to the cave
 function goCave() {
-  update(locations[2]); 
+  console.log('Going to cave');
+  update(locations.find(loc => loc.name === "cave")); 
   button4.style.display = "none";
   button5.style.display = "none";
   saveButton.style.display = "none";
@@ -343,6 +255,7 @@ function goCave() {
 }
 //Function to buy health from the store
 function buyHealth() {
+  console.log('Buying health');
   if (gold >= 10) {
     gold -= 10;
     health += 10;
@@ -354,6 +267,7 @@ function buyHealth() {
 }
 //Function to buy mana from the store
 function buyMana() {
+  console.log('Buying mana');
   if (gold >= 10) {
     gold -= 10;
     playerMana += 10;
@@ -376,7 +290,7 @@ function buyWeapon() {
       inventory.push(newWeapon);
       text.innerText += " In your inventory you have: ";
       for (let i = 0; i < inventory.length; i++) {
-        text.innerText += inventory[i].name + ", ";
+        text.innerText += inventory[i].name + ",  ";
       }
     } else {
       text.innerText = "You do not have enough gold to buy a weapon.";
@@ -392,9 +306,9 @@ function sellWeapon() {
   if (inventory.length > 1) {
     gold += 15;
     goldText.innerText = gold;
-    let currentWeapon = inventory.shift();
-    text.innerText = "You sold a " + currentWeapon + ".";
-    text.innerText += " In your inventory you have: " + inventory;
+    let soldWeapon = inventory.shift();
+    text.innerText = "You sold a " + soldWeapon.name + ".";
+    text.innerText += " In your inventory you have: " + inventory.map(item => item.name).join(", ");
   } else {
     text.innerText = "Don't sell your only weapon!";
   }
@@ -579,6 +493,7 @@ function restart() {
   xpText.innerText = xp;
   levelText.innerText = level;
   gameCounter = 0;
+  button3.style.display = "inline-block";
   button4.style.display = "none";
   button5.style.display = "none";
   goTown();
@@ -625,11 +540,16 @@ function buySpell() {
 
 function enchantWeapon() {
   if (gold >= 50) {
+    if (weapons[currentWeapon].enchanted == true) {
+      text.innerText = "Your weapon is already enchanted.";
+    }
+    else{
     weapons[currentWeapon].enchanted = true;
     text.innerText = "Your " + weapons[currentWeapon].name + " is now enchanted!";
     weapons[currentWeapon].power += 50;
     gold -= 50;
     goldText.innerText = gold;
+    }
   }else{
     text.innerText = "You do not have enough gold to enchant your weapon.";
     }

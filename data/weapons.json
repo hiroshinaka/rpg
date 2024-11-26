@@ -1,0 +1,26 @@
+[
+    { 
+      "name": "Stick", 
+      "power": 5,
+      "enchanted": false,
+      "img": "<i class='fa-solid fa-slash'></i>"
+    },
+    { 
+      "name": "Dagger", 
+      "power": 30,
+      "enchanted": false,
+      "img": "🗡️"
+    },
+    { 
+      "name": "War hammer", 
+      "power": 50,
+      "enchanted": false,
+      "img": "🔨"
+    },
+    { 
+      "name": "Sword", 
+      "power": 100,
+      "enchanted": false,
+      "img": "⚔️"
+    }
+]
