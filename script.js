@@ -46,7 +46,7 @@ let playerspells = 0;
 let playerMana = 100;
 let maxMana = 100;
 let spells =[];
-let gameCounter = 1;
+let gameCounter = 0;
 let level = 1;
 
 const button1 = document.querySelector('#button1');
